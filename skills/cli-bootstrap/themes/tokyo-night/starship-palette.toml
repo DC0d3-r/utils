@@ -1,0 +1,36 @@
+# Theme: Tokyo Night — Starship palette
+# Include via: palette = "tokyo-night" in your starship.toml
+
+[palettes.tokyo-night]
+# Background surfaces
+void      = "#16161E"
+ink       = "#16161E"
+sumi      = "#1A1B26"
+stone     = "#24283B"
+pebble    = "#292E42"
+drift     = "#3B4261"
+mist      = "#3B4261"
+fog       = "#545C7E"
+
+# Foreground tones
+ash       = "#545C7E"
+clay      = "#565F89"
+parchment = "#787C99"
+ivory     = "#A9B1D6"
+silk      = "#C0CAF5"
+
+# Accent colors
+autumnLeaf  = "#F7768E"
+mossGreen   = "#9ECE6A"
+sandGold    = "#E0AF68"
+crystalBlue = "#7AA2F7"
+oniViolet   = "#BB9AF7"
+waveAqua    = "#7DCFFF"
+
+# Bright accents
+waveRed     = "#FF9E64"
+springGreen = "#73DACA"
+carpYellow  = "#E0AF68"
+springBlue  = "#7AA2F7"
+springViolet = "#BB9AF7"
+waveAqua2   = "#B4F9F8"

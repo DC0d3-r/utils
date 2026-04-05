@@ -1,0 +1,36 @@
+# Theme: Wavefront — Starship palette
+# Include via: palette = "wavefront" in your starship.toml
+
+[palettes.wavefront]
+# Background surfaces
+void      = "#111117"
+ink       = "#16161D"
+sumi      = "#1F1F28"
+stone     = "#2A2A37"
+pebble    = "#363646"
+drift     = "#44445B"
+mist      = "#54546D"
+fog       = "#65657A"
+
+# Foreground tones
+ash       = "#727169"
+clay      = "#938E7E"
+parchment = "#C8C093"
+ivory     = "#DCD7BA"
+silk      = "#EDEAD5"
+
+# Accent colors
+autumnLeaf  = "#D0605A"
+mossGreen   = "#7BA888"
+sandGold    = "#C4B28A"
+crystalBlue = "#7E9CD8"
+oniViolet   = "#957FB8"
+waveAqua    = "#6DB5A8"
+
+# Bright accents
+waveRed     = "#E8685E"
+springGreen = "#8FBF96"
+carpYellow  = "#DEB97D"
+springBlue  = "#7FB4CA"
+springViolet = "#B09FD6"
+waveAqua2   = "#82CCBE"

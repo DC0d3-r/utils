@@ -1,0 +1,47 @@
+# Theme: Glassmind — btop theme
+# Place in ~/.config/btop/themes/glassmind.theme
+
+# Main background and foreground
+theme[main_bg]="#1A1A22"
+theme[main_fg]="#D8D4EA"
+
+# Title/header
+theme[title]="#EAE8F0"
+theme[hi_fg]="#7090D0"
+
+# Selector/selected
+theme[selected_bg]="#222230"
+theme[selected_fg]="#EAE8F0"
+
+# Inactive text
+theme[inactive_fg]="#7A7A8C"
+
+# Process box
+theme[proc_misc]="#7090D0"
+
+# Box borders
+theme[cpu_box]="#7090D0"
+theme[mem_box]="#A080C0"
+theme[net_box]="#70B8B0"
+theme[proc_box]="#D0B878"
+
+# Graph colors (gradient: green -> yellow -> red)
+theme[cpu_start]="#70C090"
+theme[cpu_mid]="#D0B878"
+theme[cpu_end]="#E07070"
+
+theme[free_start]="#70C090"
+theme[free_mid]="#D0B878"
+theme[free_end]="#E07070"
+
+theme[download]="#7090D0"
+theme[upload]="#A080C0"
+
+# Temperature gradient
+theme[temp_start]="#70C090"
+theme[temp_mid]="#D0B878"
+theme[temp_end]="#E07070"
+
+# Dividers and graph labels
+theme[div_line]="#353548"
+theme[graph_text]="#9090A0"

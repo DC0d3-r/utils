@@ -1,0 +1,22 @@
+# Theme: Catppuccin Mocha — Lazygit theme
+gui:
+  theme:
+    activeBorderColor:
+      - "#89B4FA"   # blue
+      - bold
+    inactiveBorderColor:
+      - "#585B70"   # Drift
+    optionsTextColor:
+      - "#89B4FA"   # blue
+    selectedLineBgColor:
+      - "#313244"   # Stone
+    selectedRangeBgColor:
+      - "#45475A"   # Pebble
+    cherryPickedCommitBgColor:
+      - "#302030"   # warm red tint
+    cherryPickedCommitFgColor:
+      - "#F38BA8"   # red
+    unstagedChangesColor:
+      - "#F38BA8"   # red
+    defaultFgColor:
+      - "#CDD6F4"   # primary fg

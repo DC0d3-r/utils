@@ -1,0 +1,20 @@
+# Theme: Rose Pine — Delta diff colors
+# Include from .gitconfig: [include] path = themes/rose-pine/delta.gitconfig
+
+[delta]
+    syntax-theme = ansi
+    minus-style = "syntax #271B24"
+    minus-emph-style = "syntax #351B28"
+    plus-style = "syntax #1B2430"
+    plus-emph-style = "syntax #1B3038"
+    line-numbers-minus-style = "#EB6F92"
+    line-numbers-plus-style = "#31748F"
+    line-numbers-zero-style = "#403D52"
+    hunk-header-style = "file line-number syntax"
+    hunk-header-decoration-style = "box ul"
+    file-style = "#9CCFD8 bold"
+    file-decoration-style = "none"
+    commit-decoration-style = "none"
+    line-numbers = true
+    side-by-side = true
+    navigate = true

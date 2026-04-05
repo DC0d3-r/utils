@@ -1,0 +1,22 @@
+# Wavefront theme for lazygit v1.0-final
+gui:
+  theme:
+    activeBorderColor:
+      - "#C4B28A"   # sandGold — matches kitty active border
+      - bold
+    inactiveBorderColor:
+      - "#44445B"   # Drift — subtle but present
+    optionsTextColor:
+      - "#7E9CD8"   # crystalBlue — keybinding hints
+    selectedLineBgColor:
+      - "#2A2A37"   # Stone — one elevation up
+    selectedRangeBgColor:
+      - "#363646"   # Pebble — two elevations up
+    cherryPickedCommitBgColor:
+      - "#2A1A18"   # warm red tint (matches delta minus-bg)
+    cherryPickedCommitFgColor:
+      - "#D0605A"   # autumnLeaf
+    unstagedChangesColor:
+      - "#D0605A"   # autumnLeaf
+    defaultFgColor:
+      - "#DCD7BA"   # Ivory

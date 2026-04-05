@@ -1,0 +1,47 @@
+# Theme: Neon Depths — btop theme
+# Place in ~/.config/btop/themes/neon-depths.theme
+
+# Main background and foreground
+theme[main_bg]="#181824"
+theme[main_fg]="#D0CBE4"
+
+# Title/header
+theme[title]="#E8E4F0"
+theme[hi_fg]="#6C99FF"
+
+# Selector/selected
+theme[selected_bg]="#22222E"
+theme[selected_fg]="#E8E4F0"
+
+# Inactive text
+theme[inactive_fg]="#8080A0"
+
+# Process box
+theme[proc_misc]="#6C99FF"
+
+# Box borders
+theme[cpu_box]="#6C99FF"
+theme[mem_box]="#BD93F9"
+theme[net_box]="#8BE9FD"
+theme[proc_box]="#F1FA8C"
+
+# Graph colors (gradient: green -> yellow -> red)
+theme[cpu_start]="#50FA7B"
+theme[cpu_mid]="#F1FA8C"
+theme[cpu_end]="#FF6B6B"
+
+theme[free_start]="#50FA7B"
+theme[free_mid]="#F1FA8C"
+theme[free_end]="#FF6B6B"
+
+theme[download]="#6C99FF"
+theme[upload]="#BD93F9"
+
+# Temperature gradient
+theme[temp_start]="#50FA7B"
+theme[temp_mid]="#F1FA8C"
+theme[temp_end]="#FF6B6B"
+
+# Dividers and graph labels
+theme[div_line]="#3A3A4A"
+theme[graph_text]="#9898B8"

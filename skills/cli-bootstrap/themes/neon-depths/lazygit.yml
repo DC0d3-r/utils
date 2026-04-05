@@ -1,0 +1,22 @@
+# Theme: Neon Depths — Lazygit theme
+gui:
+  theme:
+    activeBorderColor:
+      - "#BD93F9"   # neon purple
+      - bold
+    inactiveBorderColor:
+      - "#3A3A4A"   # Drift
+    optionsTextColor:
+      - "#6C99FF"   # neon blue
+    selectedLineBgColor:
+      - "#22222E"   # Stone
+    selectedRangeBgColor:
+      - "#2C2C3A"   # Pebble
+    cherryPickedCommitBgColor:
+      - "#2E1A1E"   # warm red tint
+    cherryPickedCommitFgColor:
+      - "#FF6B6B"   # neon red
+    unstagedChangesColor:
+      - "#FF6B6B"   # neon red
+    defaultFgColor:
+      - "#D0CBE4"   # primary fg

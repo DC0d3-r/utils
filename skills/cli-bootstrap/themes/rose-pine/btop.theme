@@ -1,0 +1,47 @@
+# Theme: Rose Pine — btop theme
+# Place in ~/.config/btop/themes/rose-pine.theme
+
+# Main background and foreground
+theme[main_bg]="#191724"
+theme[main_fg]="#E0DEF4"
+
+# Title/header
+theme[title]="#E0DEF4"
+theme[hi_fg]="#9CCFD8"
+
+# Selector/selected
+theme[selected_bg]="#26233A"
+theme[selected_fg]="#E0DEF4"
+
+# Inactive text
+theme[inactive_fg]="#555169"
+
+# Process box
+theme[proc_misc]="#9CCFD8"
+
+# Box borders
+theme[cpu_box]="#9CCFD8"
+theme[mem_box]="#C4A7E7"
+theme[net_box]="#EBBCBA"
+theme[proc_box]="#F6C177"
+
+# Graph colors (gradient: pine -> gold -> love)
+theme[cpu_start]="#31748F"
+theme[cpu_mid]="#F6C177"
+theme[cpu_end]="#EB6F92"
+
+theme[free_start]="#31748F"
+theme[free_mid]="#F6C177"
+theme[free_end]="#EB6F92"
+
+theme[download]="#9CCFD8"
+theme[upload]="#C4A7E7"
+
+# Temperature gradient
+theme[temp_start]="#31748F"
+theme[temp_mid]="#F6C177"
+theme[temp_end]="#EB6F92"
+
+# Dividers and graph labels
+theme[div_line]="#403D52"
+theme[graph_text]="#6E6A86"

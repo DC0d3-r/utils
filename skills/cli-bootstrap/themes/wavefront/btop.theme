@@ -1,0 +1,47 @@
+# Theme: Wavefront — btop theme
+# Place in ~/.config/btop/themes/wavefront.theme
+
+# Main background and foreground
+theme[main_bg]="#1F1F28"
+theme[main_fg]="#DCD7BA"
+
+# Title/header
+theme[title]="#EDEAD5"
+theme[hi_fg]="#7E9CD8"
+
+# Selector/selected
+theme[selected_bg]="#2A2A37"
+theme[selected_fg]="#EDEAD5"
+
+# Inactive text
+theme[inactive_fg]="#727169"
+
+# Process box
+theme[proc_misc]="#7E9CD8"
+
+# Box borders
+theme[cpu_box]="#7E9CD8"
+theme[mem_box]="#957FB8"
+theme[net_box]="#6DB5A8"
+theme[proc_box]="#C4B28A"
+
+# Graph colors (gradient: green -> yellow -> red)
+theme[cpu_start]="#7BA888"
+theme[cpu_mid]="#C4B28A"
+theme[cpu_end]="#D0605A"
+
+theme[free_start]="#7BA888"
+theme[free_mid]="#C4B28A"
+theme[free_end]="#D0605A"
+
+theme[download]="#7E9CD8"
+theme[upload]="#957FB8"
+
+# Temperature gradient
+theme[temp_start]="#7BA888"
+theme[temp_mid]="#C4B28A"
+theme[temp_end]="#D0605A"
+
+# Dividers and graph labels
+theme[div_line]="#44445B"
+theme[graph_text]="#938E7E"

@@ -1,0 +1,22 @@
+# Theme: Tokyo Night — Lazygit theme
+gui:
+  theme:
+    activeBorderColor:
+      - "#7AA2F7"   # blue
+      - bold
+    inactiveBorderColor:
+      - "#3B4261"   # Drift
+    optionsTextColor:
+      - "#7AA2F7"   # blue
+    selectedLineBgColor:
+      - "#24283B"   # Stone
+    selectedRangeBgColor:
+      - "#292E42"   # Pebble
+    cherryPickedCommitBgColor:
+      - "#2D1B22"   # warm red tint
+    cherryPickedCommitFgColor:
+      - "#F7768E"   # red
+    unstagedChangesColor:
+      - "#F7768E"   # red
+    defaultFgColor:
+      - "#A9B1D6"   # primary fg

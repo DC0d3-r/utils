@@ -1,0 +1,36 @@
+# Theme: Glassmind — Starship palette
+# Include via: palette = "glassmind" in your starship.toml
+
+[palettes.glassmind]
+# Background surfaces
+void      = "#101014"
+ink       = "#15151A"
+sumi      = "#1A1A22"
+stone     = "#222230"
+pebble    = "#2A2A3A"
+drift     = "#353548"
+mist      = "#404058"
+fog       = "#4D4D68"
+
+# Foreground tones
+ash       = "#7A7A8C"
+clay      = "#9090A0"
+parchment = "#A8A8B8"
+ivory     = "#D8D4EA"
+silk      = "#EAE8F0"
+
+# Accent colors
+autumnLeaf  = "#E07070"
+mossGreen   = "#70C090"
+sandGold    = "#D0B878"
+crystalBlue = "#7090D0"
+oniViolet   = "#A080C0"
+waveAqua    = "#70B8B0"
+
+# Bright accents
+waveRed     = "#F08888"
+springGreen = "#88D0A8"
+carpYellow  = "#E0C890"
+springBlue  = "#88A8E0"
+springViolet = "#B898D8"
+waveAqua2   = "#88D0C8"

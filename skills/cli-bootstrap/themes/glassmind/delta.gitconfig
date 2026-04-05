@@ -1,0 +1,20 @@
+# Theme: Glassmind — Delta diff colors
+# Include from .gitconfig: [include] path = themes/glassmind/delta.gitconfig
+
+[delta]
+    syntax-theme = ansi
+    minus-style = "syntax #281A1E"
+    minus-emph-style = "syntax #361A20"
+    plus-style = "syntax #1A2822"
+    plus-emph-style = "syntax #1A362A"
+    line-numbers-minus-style = "#E07070"
+    line-numbers-plus-style = "#70C090"
+    line-numbers-zero-style = "#404058"
+    hunk-header-style = "file line-number syntax"
+    hunk-header-decoration-style = "box ul"
+    file-style = "#7090D0 bold"
+    file-decoration-style = "none"
+    commit-decoration-style = "none"
+    line-numbers = true
+    side-by-side = true
+    navigate = true

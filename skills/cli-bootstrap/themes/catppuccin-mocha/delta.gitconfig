@@ -1,0 +1,20 @@
+# Theme: Catppuccin Mocha — Delta diff colors
+# Include from .gitconfig: [include] path = themes/catppuccin-mocha/delta.gitconfig
+
+[delta]
+    syntax-theme = ansi
+    minus-style = "syntax #302030"
+    minus-emph-style = "syntax #3E2038"
+    plus-style = "syntax #203028"
+    plus-emph-style = "syntax #203E30"
+    line-numbers-minus-style = "#F38BA8"
+    line-numbers-plus-style = "#A6E3A1"
+    line-numbers-zero-style = "#585B70"
+    hunk-header-style = "file line-number syntax"
+    hunk-header-decoration-style = "box ul"
+    file-style = "#89B4FA bold"
+    file-decoration-style = "none"
+    commit-decoration-style = "none"
+    line-numbers = true
+    side-by-side = true
+    navigate = true
