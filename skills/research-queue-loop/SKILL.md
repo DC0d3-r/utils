@@ -121,14 +121,9 @@ In evaluation loops with multiple agents/personas: put the adversarial or breaki
 | Self-evolving queue | Research discovers what you don't know yet — agenda improves over time |
 | Phase gates | Prevents research rabbit holes — forces convergence toward deliverable |
 
-## Discord Notifications
+## Notifications
+Confirm with user where they want notification
 
-Loop cycle updates go to **#brahma-cycles** — the channel for cycle decisions and progress.
-
-| What | Channel | ID | Tool |
-|------|---------|-----|------|
-| Cycle updates (NOTIFY steps) | #brahma-cycles | `1488207247631974642` | `mcp__discord-mcp-basics__discord_send` |
-| DMs to Dhruv (action items) | DM channel | `1480276741581705508` | `mcp__plugin_discord_discord__reply` |
 
 **Important:** `discord-mcp-basics` is guild-only. It CANNOT send to DM channels (will error "not a text channel"). Use `plugin_discord` for DMs.
 
@@ -137,7 +132,6 @@ Format: Short update per cycle — what was done, key finding, what's next. Unde
 ## Customization Points
 
 - **Interval:** 30m for deep research, 10m for monitoring, 1h for low-priority
-- **Notification channel:** #brahma-cycles (`1488207247631974642`) for cycle updates
 - **Subagent type:** `general-purpose` for web research, `Explore` for codebase research
 - **Output format:** Markdown reports, JSON data, code prototypes — match the phase
 - **Convergence trigger:** Fixed count ("after 5 reports"), quality-based ("when 3 patterns confirmed"), or manual ("user says move on")
