@@ -1,28 +1,46 @@
 ---
 name: publish-to-bhandar
-description: Publish a research output, brief, study, ledger, or companion as a Brahma-aesthetic HTML page to the personal library at https://aakashvani.bear-atria.ts.net (Brahma's Bhandar). MUST trigger whenever the user says any of "publish this", "post to bhandar", "post to library", "add to bhandar", "add to the library", "make a wiki page for X", "ship this as a webpage", "put this online", "publish the X research/brief/study/findings"; ALSO trigger proactively whenever a substantive research loop, brief, explainer, or design study is completed within the conversation (offer the user "want me to publish this to the bhandar?"). Generates a single page or a multi-page series in the Brahma visual language (Fraunces / Spectral / JetBrains Mono / vermilion+saffron palette / aged paper), drops the file(s) into ~/code/homelab/bhandar/site/, registers metadata in the manifest, regenerates the library landing index, then commits and pushes — the docker container at aakashvani-caddy serves the new page within a second of git push. Do NOT trigger for one-off file generation that isn't going onto the bhandar (e.g., "make me a webpage" with no library context), and do NOT trigger when the user explicitly only wants a draft they can review before publishing.
+description: Publish a research output, brief, study, ledger, or companion as a Brahma-aesthetic HTML page to either the public library (Brahma's Bhandar — https://aakashvani.bear-atria.ts.net, internet-accessible) or the private library (Antaranga — https://aakashvani-private.bear-atria.ts.net, tailnet-only). MUST trigger whenever the user says any of "publish this", "post to bhandar", "post to library", "post to antaranga", "add to bhandar", "add to the library", "make a wiki page for X", "ship this as a webpage", "put this online", "publish the X research/brief/study/findings", "save this privately to the bhandar", "private publish"; ALSO trigger proactively whenever a substantive research loop, brief, explainer, or design study is completed within the conversation (offer the user "want me to publish this to the bhandar?"). For PII-bearing or otherwise sensitive content, default to the private side (Antaranga). Generates a single page or a multi-page series in the Brahma visual language (Fraunces / Spectral / JetBrains Mono / vermilion+saffron palette / aged paper), drops the file(s) into the right docroot, registers metadata in the manifest, regenerates the catalogue, and (for public pages only) commits and pushes — the relevant docker container serves the new page within a second. Do NOT trigger for one-off file generation that isn't going onto the bhandar (e.g., "make me a webpage" with no library context), and do NOT trigger when the user explicitly only wants a draft they can review before publishing.
 ---
 
 # publish-to-bhandar
 
-Turn a piece of work into a published page in Brahma's Bhandar.
+Turn a piece of work into a published page in Brahma's Bhandar — either the **public** side (the Bhandar, internet-facing) or the **private** side (the Antaranga, tailnet-only for PII).
 
 ## What this skill does
 
-Builds and publishes a chapter to the personal library hosted at `https://aakashvani.bear-atria.ts.net`:
+Builds and publishes a chapter to one of two libraries:
 
-1. Picks a name and metadata for the new piece (title, lede, kicker, marker, date, etc.)
-2. Generates the HTML page — you write it, using the Brahma aesthetic
-3. Registers the entry in `.bhandar/manifest.json`
-4. Rebuilds the library catalogue (`site/index.html`)
-5. Commits + pushes the bhandar repo
-6. Verifies the new URL is live
+| Side | URL | Audience | Persistence |
+|------|-----|----------|-------------|
+| **Public** (Bhandar) | `https://aakashvani.bear-atria.ts.net` | Anyone with the link | git-tracked, pushed to GitHub |
+| **Private** (Antaranga) | `https://aakashvani-private.bear-atria.ts.net` | Only your tailnet devices | local-only (gitignored, never pushed) |
 
-The repo is `~/code/homelab/bhandar/`. A docker container watches `site/` via a read-only bind mount, so a `git push` is effectively a deploy — no restart needed.
+The pipeline is the same for both:
+
+1. Pick a name and metadata for the new piece (title, lede, kicker, marker, date, etc.)
+2. Generate the HTML page — you write it, using the Brahma aesthetic
+3. Register the entry in the right `.bhandar/manifest.json`
+4. Rebuild the catalogue index for that side
+5. (Public only) Commit + push the repo
+6. Verify the new URL is live
+
+The repo is `~/code/homelab/bhandar/`. Two docker container pairs watch their respective docroots via read-only bind mounts, so a file save is effectively a deploy — no restart needed.
 
 ## When to trigger
 
 The frontmatter description handles routing. Mostly: when Dhruv finishes a substantive research output and either says "publish it" or you proactively offer.
+
+## Public vs Private — which side?
+
+Default to **public** unless one of these is true:
+
+- The page contains PII (real names beyond Dhruv's, addresses, account numbers, financial detail, photos of people)
+- It contains internal notes about specific people (vendors, contacts, family)
+- It's a draft Dhruv wants to share with himself across devices but not the world
+- Dhruv explicitly says "private", "antaranga", or "tailnet only"
+
+When in doubt, ASK. Once a page is published publicly, taking it down requires a force-push that likely leaves a cache trail.
 
 ## Workflow
 
@@ -60,21 +78,24 @@ For single-page entries:
 1. Read `assets/page-template.html`. It has placeholders: `{{TITLE}}`, `{{DESCRIPTION}}`, `{{WATERMARK_1}}`, `{{WATERMARK_2}}`, `{{KICKER}}`, `{{H1_HTML}}`, `{{SUBTITLE}}`, `{{META_BAR_HTML}}`, `{{BODY}}`, `{{DATE}}`.
 2. Substitute placeholders with your metadata. `{{META_BAR_HTML}}` should be `<span>...</span><span class="dot">◆</span><span>...</span>` etc.
 3. Write the article body inside `{{BODY}}` using the design system's class vocabulary (h2, h3, p, p.lead, em, strong, code, table, callout, etc. — see `references/design-system.md` for the full list and rules).
-4. Save to `~/code/homelab/bhandar/site/<slug>.html`.
+4. Save to:
+   - **Public:** `~/code/homelab/bhandar/site/<slug>.html`
+   - **Private:** `~/code/homelab/bhandar/site-private/<slug>.html`
 
 For multi-page series:
-- Create `~/code/homelab/bhandar/site/<slug>/`
+- Create `~/code/homelab/bhandar/site/<slug>/` (or `site-private/<slug>/`)
 - Write a series-cover `index.html` that links to chapters
 - Write each chapter as its own HTML file in `<slug>/<chapter-slug>.html`
 - The catalog entry's `href` is `/<slug>/` (the series cover)
 - See `~/code/homelab/bhandar/site/local-knowledge/` for a worked example
 
-### Step 4 — Register + rebuild + push
+### Step 4 — Register + rebuild (+ push if public)
 
-Use `scripts/publish.py register --commit`:
+`publish.py` defaults to `--target public`. Add `--target private` for the Antaranga.
 
+**Public example:**
 ```bash
-python3 ~/code/utils/skills/publish-to-bhandar/scripts/publish.py register --metadata '{
+python3 ~/code/utils/skills/publish-to-bhandar/scripts/publish.py register --commit --metadata '{
   "slug":        "indrajaal",
   "href":        "/indrajaal.html",
   "title_html":  "The Net of <em>Indrajaal</em>",
@@ -85,38 +106,37 @@ python3 ~/code/utils/skills/publish-to-bhandar/scripts/publish.py register --met
   "meta_tokens": ["Four Hermes profiles", "~14 min"],
   "open_label":  "Read",
   "order":       20
-}' --commit
+}'
 ```
 
-The `--commit` flag does git add + commit + push automatically. Use `--no-push` if Dhruv wants to review the diff first.
-
-If you only want to test the index regeneration (no manifest change):
+**Private example** — same fields, just add `--target private`. The `--commit` flag is a no-op on the private side (the docroot is gitignored), but it's harmless to leave in:
 ```bash
-python3 .../scripts/publish.py rebuild
+python3 ~/code/utils/skills/publish-to-bhandar/scripts/publish.py register --target private --metadata '{
+  "slug":  "vendor-list-2026",
+  "href":  "/vendor-list-2026.html",
+  ...
+}'
 ```
 
-To remove an entry from the catalog (does NOT delete the page file):
+Other commands all accept `--target`:
 ```bash
-python3 .../scripts/publish.py remove indrajaal
-```
-
-To list current catalog:
-```bash
-python3 .../scripts/publish.py list
+publish.py rebuild --target private              # regen Antaranga catalog
+publish.py list    --target private              # show private entries
+publish.py remove  --target private vendor-list  # remove from catalog (page stays)
 ```
 
 ### Step 5 — Verify the URL
 
-After push, hit the URL to confirm:
-
 ```bash
+# public:
 curl -sk -I https://aakashvani.bear-atria.ts.net/<slug>.html | head -3
+
+# private (must be on tailnet):
+curl -sk -I https://aakashvani-private.bear-atria.ts.net/<slug>.html | head -3
 # expect: HTTP/2 200
 ```
 
-For multi-page: `https://aakashvani.bear-atria.ts.net/<slug>/`
-
-The docker container has a live bind mount on `site/`, so the file is served the moment git updates the working tree on the Mac Mini. Tell Dhruv the URL.
+The docker containers have live bind mounts, so the file is served the moment it lands on disk. Tell Dhruv the URL.
 
 ## Conventions worth respecting
 
@@ -124,7 +144,9 @@ The docker container has a live bind mount on `site/`, so the file is served the
 - **Dates are absolute** — never "Thursday" or "yesterday". `YYYY-MM-DD` only.
 - **Lede is the hook** — write it last, after you've drafted the page. The lede appears on the catalog without page context, so it must stand alone.
 - **One callout per page max** — they're scarce on purpose. The most quotable line of the piece, not a section summary.
-- **No new files in `site/` except your page and its assets** — the container serves everything in `site/` publicly. Don't drop secrets or work-in-progress drafts there.
+- **No new files in `site/` except your page and its assets** — the container serves everything in `site/` publicly. Don't drop secrets or work-in-progress drafts there. Use `site-private/` instead.
+- **Public-vs-private is hard to undo** — taking down a public page requires force-pushing git history and trusting that no one cached it. When in doubt, publish private first; promote to public later.
+- **Site-level tone is set by the manifest** — both manifests' `site` blocks carry the title, h1, devanagari, watermarks, lock band, aphorism, and colophon. To change the look of either side, edit the manifest's `site` block, not the build script.
 
 ## Bundled resources
 

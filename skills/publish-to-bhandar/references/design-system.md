@@ -128,3 +128,28 @@ If unsure, default to `&#x092C;` and `&#x0917;&#x094D;&#x0930;&#x0902;&#x0925;` 
 - Callouts are short — under 50 words. The most quotable line of the piece.
 - Tables when there's a real comparison; lists when there's a real enumeration; never both.
 - Closing section is a one- or two-sentence resolution, not a "Conclusion" header.
+
+## The private side — Antaranga
+
+The bhandar has a sibling site at `site-private/` served by a second Tailscale identity (`aakashvani-private`) with no Funnel — reachable only on the tailnet. Its catalog is the **Antaranga** (अन्तरङ्ग, "inner / inner sanctum").
+
+**When pages go to Antaranga rather than the public Bhandar:**
+- Anything carrying real names beyond Dhruv's, addresses, account/credential identifiers, financial figures, photos of identifiable people, or internal notes about specific contacts/vendors.
+- Drafts Dhruv wants synced across his devices but not shared.
+- Anything Dhruv explicitly tags `private`, `tailnet only`, `antaranga`.
+
+**Visual differences from the public side:**
+- Lock band immediately under the seal: `<div class="lock-band"><span class="glyph">●</span> Tailnet only · Aakashvani-Private</div>` — crimson border, JetBrains Mono uppercase. Renders only because the private manifest's `site` block sets `lock_band_html`.
+- Watermarks: `अ` + `अन्तरङ्ग` + `गुप्त` instead of public's `ब` + `ग्रन्थ` + `भ`.
+- Aphorism: "*यदन्तरं तद् ब्रह्म* — That which is within, that indeed is Brahman" — inner-focused.
+- Colophon ends with the private hostname.
+
+**Manifest-level overrides** (all optional in the `site` block — fall back to public defaults if missing):
+- `lock_band_html` — full HTML for the badge, or omit on the public side
+- `watermarks_html` — three `<span class="watermark wm-1/2/3">…</span>` tags
+- `aphorism_html` — sanskrit + translation
+- `colophon_html` — supports `{entry_count}` substitution
+
+The page-template aesthetic itself is identical on both sides — only the catalog landing differs.
+
+**Discoverability:** the private side is invisible to the public internet by design (no public DNS record, Funnel off). Default behavior is correct; you don't need to mark individual pages as private — putting them in `site-private/` is the entire access control.

@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 """
-build_index.py — regenerate site/index.html from .bhandar/manifest.json
+build_index.py — regenerate <site-dir>/index.html from <site-dir>/.bhandar/manifest.json
 
 The library landing is a function of the manifest. Edit the manifest, run this,
 get a fresh index.html. Idempotent.
 
+Used by both the public bhandar (site/) and the tailnet-only Antaranga (site-private/).
+The two sites differ in their manifest's `site` block — they share the same template.
+
 Usage:
-  build_index.py [--site-dir <path>]
-  default site-dir: ~/code/homelab/bhandar/site
+  build_index.py                              # default: ~/code/homelab/bhandar/site
+  build_index.py --site-dir <path>            # any site root with .bhandar/manifest.json
+  build_index.py --target private             # shortcut for ~/code/homelab/bhandar/site-private
 """
 
 import argparse
@@ -15,7 +19,26 @@ import json
 import sys
 from pathlib import Path
 
-DEFAULT_SITE = Path.home() / "code/homelab/bhandar/site"
+REPO_ROOT = Path.home() / "code/homelab/bhandar"
+SITE_DIRS = {
+    "public":  REPO_ROOT / "site",
+    "private": REPO_ROOT / "site-private",
+}
+DEFAULT_SITE = SITE_DIRS["public"]
+
+# defaults for optional site-block fields. manifests can override.
+DEFAULT_WATERMARKS_HTML = """<span class="watermark wm-1">&#x092C;</span>
+  <span class="watermark wm-2">&#x0917;&#x094D;&#x0930;&#x0902;&#x0925;</span>
+  <span class="watermark wm-3">&#x092D;</span>"""
+
+DEFAULT_APHORISM_HTML = """<span class="sanskrit">&#x0938;&#x0930;&#x094D;&#x0935;&#x0902; &#x0916;&#x0932;&#x094D;&#x0935;&#x093F;&#x0926;&#x092E;&#x094D; &#x092C;&#x094D;&#x0930;&#x0939;&#x094D;&#x092E;</span>
+      All this, indeed, is Brahman &mdash; what is composed, and what composes; what is read, and what reads."""
+
+DEFAULT_COLOPHON_HTML = """Bhandar v1
+      <span class="sep">◆</span>
+      Set in Fraunces, Spectral &amp; JetBrains Mono
+      <span class="sep">◆</span>
+      {entry_count} volumes shelved"""
 
 INDEX_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
@@ -261,6 +284,18 @@ footer {{
 }}
 .colophon .sep {{ color: var(--saffron); margin: 0 0.6em; }}
 
+.lock-band {{
+  display: inline-flex; align-items: center; gap: 0.7rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem; letter-spacing: 0.32em;
+  color: var(--crimson); text-transform: uppercase;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--crimson);
+  background: rgba(139, 58, 58, 0.06);
+  margin: 1.5rem auto 2.6rem;
+}}
+.lock-band .glyph {{ color: var(--crimson); font-size: 1em; }}
+
 @media (max-width: 720px) {{
   main {{ padding: 3.5rem 1.4rem 5rem; }}
   header {{ margin-bottom: 4rem; }}
@@ -280,12 +315,11 @@ footer {{
 <body>
 
 <main>
-  <span class="watermark wm-1">&#x092C;</span>
-  <span class="watermark wm-2">&#x0917;&#x094D;&#x0930;&#x0902;&#x0925;</span>
-  <span class="watermark wm-3">&#x092D;</span>
+  {watermarks_html}
 
   <header>
     <div class="seal">{seal}</div>
+    {lock_band_html}
     <h1>{h1_html}</h1>
     <div class="devanagari">{devanagari}</div>
     <p class="subtitle">{subtitle}</p>
@@ -299,15 +333,10 @@ footer {{
 
   <footer>
     <p class="aphorism">
-      <span class="sanskrit">&#x0938;&#x0930;&#x094D;&#x0935;&#x0902; &#x0916;&#x0932;&#x094D;&#x0935;&#x093F;&#x0926;&#x092E;&#x094D; &#x092C;&#x094D;&#x0930;&#x0939;&#x094D;&#x092E;</span>
-      All this, indeed, is Brahman &mdash; what is composed, and what composes; what is read, and what reads.
+      {aphorism_html}
     </p>
     <div class="colophon">
-      Bhandar v1
-      <span class="sep">◆</span>
-      Set in Fraunces, Spectral &amp; JetBrains Mono
-      <span class="sep">◆</span>
-      {entry_count} volumes shelved
+      {colophon_html}
     </div>
   </footer>
 </main>
@@ -381,29 +410,49 @@ def build(site_dir: Path) -> Path:
     entries = manifest["entries"]
     entries_html = render_entries(entries)
     meta_bar_html = render_meta_bar(site["meta_bar"], len(entries))
+
+    # optional fields fall back to defaults — keeps the public manifest minimal
+    # while letting the private one (Antaranga) override watermarks, lock-band, etc.
+    colophon_html = site.get("colophon_html", DEFAULT_COLOPHON_HTML).format(entry_count=len(entries))
+
     rendered = INDEX_TEMPLATE.format(
         title=site["title"],
         seal=site["seal"],
+        lock_band_html=site.get("lock_band_html", ""),
         h1_html=site["h1_html"],
         devanagari=site["devanagari"],
         subtitle=site["subtitle"],
         meta_bar_html=meta_bar_html,
         shelf_heading=site["shelf_heading"],
         entries_html=entries_html,
-        entry_count=len(entries),
+        watermarks_html=site.get("watermarks_html", DEFAULT_WATERMARKS_HTML),
+        aphorism_html=site.get("aphorism_html", DEFAULT_APHORISM_HTML),
+        colophon_html=colophon_html,
     )
     out = site_dir / "index.html"
     out.write_text(rendered)
     return out
 
 
+def resolve_site_dir(site_dir_arg, target_arg) -> Path:
+    """--site-dir takes precedence; otherwise --target picks public/private."""
+    if site_dir_arg is not None:
+        return site_dir_arg
+    if target_arg is not None:
+        return SITE_DIRS[target_arg]
+    return DEFAULT_SITE
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--site-dir", type=Path, default=DEFAULT_SITE,
-                   help="bhandar site/ directory (default: ~/code/homelab/bhandar/site)")
+    p.add_argument("--site-dir", type=Path, default=None,
+                   help="any directory containing .bhandar/manifest.json")
+    p.add_argument("--target", choices=list(SITE_DIRS.keys()), default=None,
+                   help="shortcut: 'public' (the bhandar) or 'private' (the Antaranga)")
     args = p.parse_args()
-    out = build(args.site_dir)
-    manifest = json.loads((args.site_dir / ".bhandar" / "manifest.json").read_text())
+    site_dir = resolve_site_dir(args.site_dir, args.target)
+    out = build(site_dir)
+    manifest = json.loads((site_dir / ".bhandar" / "manifest.json").read_text())
     print(f"✓ {out}  ({len(manifest['entries'])} entries)")
 
 

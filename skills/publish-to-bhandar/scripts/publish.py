@@ -7,15 +7,22 @@ the assets/page-template.html and the design-system reference. This script
 handles the mechanical bits: validate metadata, append/update the manifest,
 rebuild the catalogue index, optionally git-commit + push.
 
-Workflow (typical):
-  1. Claude writes site/<slug>.html (or site/<slug>/index.html) using
-     assets/page-template.html as the wrapper + brahma-aesthetic typography.
-  2. `publish.py register --metadata '<json>'`  — adds entry to manifest.
-  3. (auto) `build_index.py`  — regenerates site/index.html from the manifest.
-  4. `publish.py commit` — git add + commit + push.
+The bhandar has TWO sides — pick which one with --target:
+  --target public   (default)  → ~/code/homelab/bhandar/site/        public, funnel'd
+  --target private              → ~/code/homelab/bhandar/site-private/  tailnet-only Antaranga
 
-Or, the full pipeline in one shot:
-  publish.py register --metadata '<json>' --commit
+The private side is gitignored — `--commit` only touches public repo state.
+For private entries you commit nothing; the file is served as soon as it lands.
+
+Workflow (typical, public):
+  1. Claude writes site/<slug>.html using assets/page-template.html.
+  2. `publish.py register --metadata '<json>'` adds entry to manifest, rebuilds index.
+  3. `publish.py register ... --commit` does it and git-pushes the public repo.
+
+Workflow (private, Antaranga):
+  1. Claude writes site-private/<slug>.html.
+  2. `publish.py register --target private --metadata '<json>'` adds + rebuilds.
+  3. (No commit — site-private/ is gitignored. Caddy serves it instantly via the live mount.)
 
 Metadata JSON (one entry):
   {
@@ -37,10 +44,9 @@ order that places it where you want. Typically:
   - 15 to slot between existing 10 and 20
   - 999 to send to the bottom
 
-Files this touches:
-  ~/code/homelab/bhandar/site/.bhandar/manifest.json     (read+write)
-  ~/code/homelab/bhandar/site/index.html                 (rewrite from manifest)
-  ~/code/homelab/bhandar/                                (git add + commit + push)
+Files this touches (depending on --target):
+  PUBLIC:   site/.bhandar/manifest.json + site/index.html (+ git commit/push if --commit)
+  PRIVATE:  site-private/.bhandar/manifest.json + site-private/index.html (no git — gitignored)
 """
 
 import argparse
@@ -51,7 +57,7 @@ from pathlib import Path
 
 # import the index builder living next to us
 sys.path.insert(0, str(Path(__file__).parent))
-from build_index import build as build_index_html
+from build_index import build as build_index_html, SITE_DIRS
 
 DEFAULT_REPO = Path.home() / "code/homelab/bhandar"
 
@@ -82,8 +88,13 @@ def validate(entry: dict) -> None:
     entry.setdefault("order", 999)
 
 
+def site_for(args) -> Path:
+    """Resolve which site directory to operate on based on --target."""
+    return SITE_DIRS[args.target]
+
+
 def cmd_register(args):
-    site = args.repo / "site"
+    site = site_for(args)
     entry = json.loads(args.metadata)
     validate(entry)
 
@@ -97,7 +108,7 @@ def cmd_register(args):
 
     out = build_index_html(site)
     action = "Replaced" if replaced else "Added"
-    print(f"✓ {action} entry {entry['slug']!r}")
+    print(f"✓ {action} {args.target} entry {entry['slug']!r}")
     print(f"✓ Rebuilt {out.relative_to(args.repo)}")
 
     # confirm the page file actually exists where the entry says it lives
@@ -108,27 +119,31 @@ def cmd_register(args):
         print(f"⚠ entry href points to {page_path} but the file does not exist yet — write it before committing", file=sys.stderr)
 
     if args.commit:
-        cmd_commit_with_repo(args.repo, message=f"publish: {entry['slug']}", push=not args.no_push)
+        if args.target == "private":
+            print("ℹ skipping commit — site-private/ is gitignored. Caddy serves the new page immediately via the live mount.")
+        else:
+            cmd_commit_with_repo(args.repo, message=f"publish: {entry['slug']}", push=not args.no_push)
 
 
 def cmd_remove(args):
-    site = args.repo / "site"
+    site = site_for(args)
     manifest = load_manifest(site)
     before = len(manifest["entries"])
     manifest["entries"] = [e for e in manifest["entries"] if e["slug"] != args.slug]
     if len(manifest["entries"]) == before:
-        sys.exit(f"no entry with slug {args.slug!r}")
+        sys.exit(f"no {args.target} entry with slug {args.slug!r}")
     save_manifest(site, manifest)
     out = build_index_html(site)
-    print(f"✓ Removed {args.slug!r} from catalogue")
+    print(f"✓ Removed {args.slug!r} from {args.target} catalogue")
     print(f"✓ Rebuilt {out.relative_to(args.repo)}")
     print(f"  (the page file is NOT deleted — remove it manually if you want)")
 
 
 def cmd_rebuild(args):
-    out = build_index_html(args.repo / "site")
-    manifest = load_manifest(args.repo / "site")
-    print(f"✓ Rebuilt {out.relative_to(args.repo)}  ({len(manifest['entries'])} entries)")
+    site = site_for(args)
+    out = build_index_html(site)
+    manifest = load_manifest(site)
+    print(f"✓ Rebuilt {out.relative_to(args.repo)}  ({len(manifest['entries'])} {args.target} entries)")
 
 
 def cmd_commit_with_repo(repo: Path, message: str, push: bool = True):
@@ -153,11 +168,20 @@ def cmd_commit(args):
 
 
 def cmd_list(args):
-    manifest = load_manifest(args.repo / "site")
+    site = site_for(args)
+    manifest = load_manifest(site)
     entries = sorted(manifest["entries"], key=lambda e: e.get("order", 999))
+    print(f"  {args.target.upper()} catalogue ({site}):\n")
+    if not entries:
+        print(f"  (empty — no entries shelved yet)")
     for e in entries:
         print(f"  [{e.get('order', '???'):>3}] {e['marker']:<10} {e['slug']:<28} {e['date']:<11} {e['href']}")
     print(f"\n{len(entries)} entries.")
+
+
+def add_target_arg(sp):
+    sp.add_argument("--target", choices=list(SITE_DIRS.keys()), default="public",
+                    help="public bhandar (default) or private Antaranga")
 
 
 def main():
@@ -167,24 +191,28 @@ def main():
     sub = p.add_subparsers(dest="cmd", required=True)
 
     sp = sub.add_parser("register", help="add or update an entry, then rebuild the index")
+    add_target_arg(sp)
     sp.add_argument("--metadata", required=True, help="JSON metadata for one entry (see module docstring)")
-    sp.add_argument("--commit", action="store_true", help="git add + commit + push after registering")
+    sp.add_argument("--commit", action="store_true", help="git add + commit + push after registering (public only — no-op on private)")
     sp.add_argument("--no-push", action="store_true", help="commit but don't push (only with --commit)")
     sp.set_defaults(func=cmd_register)
 
     sp = sub.add_parser("remove", help="remove an entry by slug; does NOT delete the page file")
+    add_target_arg(sp)
     sp.add_argument("slug")
     sp.set_defaults(func=cmd_remove)
 
     sp = sub.add_parser("rebuild", help="regenerate index.html from manifest (no metadata change)")
+    add_target_arg(sp)
     sp.set_defaults(func=cmd_rebuild)
 
-    sp = sub.add_parser("commit", help="git add + commit + push the bhandar repo")
+    sp = sub.add_parser("commit", help="git add + commit + push the bhandar repo (public side only)")
     sp.add_argument("-m", "--message", required=True)
     sp.add_argument("--no-push", action="store_true")
     sp.set_defaults(func=cmd_commit)
 
     sp = sub.add_parser("list", help="show the catalogue")
+    add_target_arg(sp)
     sp.set_defaults(func=cmd_list)
 
     args = p.parse_args()
