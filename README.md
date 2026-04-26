@@ -8,6 +8,7 @@ Portable utilities and bootstrap skills for setting up new machines.
 |-------|-------------|
 | [`cli-bootstrap/`](skills/cli-bootstrap/) | Full CLI environment setup — terminal, prompt, tools, theme. Like a senior engineer walking you through their setup. |
 | [`research-queue-loop/`](skills/research-queue-loop/) | File-backed priority queue for long-running incremental research or execution loops. One item per cycle, subagent delegation, self-evolving agenda. |
+| [`publish-to-bhandar/`](skills/publish-to-bhandar/) | Publish a research output, brief, study, or ledger as a Brahma-aesthetic HTML page to the personal library at `https://aakashvani.bear-atria.ts.net`. Picks the metadata, generates the page, regenerates the catalog, commits + pushes. |
 
 ## Philosophy
 
