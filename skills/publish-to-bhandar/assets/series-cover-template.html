@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{TITLE}}</title>
+<meta name="description" content="{{DESCRIPTION}}">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<meta name="theme-color" content="#ede4d0">
+<link rel="canonical" href="{{CANONICAL_URL}}">
+<meta property="og:type" content="article">
+<meta property="og:title" content="{{TITLE}}">
+<meta property="og:description" content="{{DESCRIPTION}}">
+<meta property="og:url" content="{{CANONICAL_URL}}">
+<meta name="twitter:card" content="summary">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/bhandar.css">
+</head>
+<body>
+
+<main>
+  <div class="watermark-layer" aria-hidden="true">
+    <span class="watermark wm-1">{{WATERMARK_1}}</span>
+    <span class="watermark wm-2">{{WATERMARK_2}}</span>
+  </div>
+
+  <nav class="crumbs">
+    <a href="/">The Bhandar</a>
+    <span class="sep">◆</span>
+    <span>{{KICKER}}</span>
+  </nav>
+
+  <header class="page-header">
+    <div class="kicker">{{KICKER}}</div>
+    <h1>{{H1_HTML}}</h1>
+    <p class="subtitle">{{SUBTITLE}}</p>
+    <div class="meta-bar">{{META_BAR_HTML}}</div>
+  </header>
+
+  <article>
+    <p class="lead">{{LEAD}}</p>
+
+    <h2>The <em>Chapters</em></h2>
+    <!-- One row per chapter. The chapter pages link back here as their
+         cover; prev/next links live on the chapter template. -->
+    <ol class="reading-list">
+      <li>
+        <span class="ch-num">I.</span>
+        <a href="{{CHAPTER_1_HREF}}">{{CHAPTER_1_TITLE}}</a>
+        <span class="ch-note">{{CHAPTER_1_NOTE}}</span>
+      </li>
+      <!-- duplicate the <li> per chapter, roman numerals ascending -->
+    </ol>
+
+{{ABOUT_HTML}}
+  </article>
+
+  <footer class="colophon">
+    <div class="ornament">◆ &nbsp; ◆ &nbsp; ◆</div>
+    <div class="ref">A volume in <a href="/">Brahma's Bhandar</a> &middot; {{DATE}}</div>
+  </footer>
+</main>
+
+</body>
+</html>

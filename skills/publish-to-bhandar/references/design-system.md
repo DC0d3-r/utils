@@ -1,6 +1,6 @@
 # Bhandar Design System
 
-The Brahma aesthetic, scoped to bhandar pages. Use these tokens, classes, and naming conventions when generating page content. The page template wires up CSS — you only write HTML inside `<article>`.
+The Brahma aesthetic, scoped to bhandar pages. Use these tokens, classes, and naming conventions when generating page content. All CSS lives in the canonical stylesheets (`assets/bhandar.css` for articles, `assets/catalogue.css` for the catalogue) — templates link them, pages never inline styles. You only write HTML inside `<article>`.
 
 ## Palette
 
@@ -104,7 +104,10 @@ Inside `<article>`, available semantic markup (all pre-styled, no inline CSS):
 | `<ul>` / `<ol>` / `<li>`       | Lists with gold markers                                 |
 | `<table><thead>...<tbody>...`  | Mono uppercase headers, row hover                       |
 | `<hr>`                         | Centered divider, max 200px                             |
-| `<div class="callout"><span class="label">Key Finding</span> ...</div>` | Pull-out box with vermilion left border. Use AT MOST 1–2 per page for the most consequential takeaway. |
+| `<div class="callout"><span class="label">Key Finding</span> ...</div>` | Pull-out box with vermilion left border. AT MOST ONE per page — the single most consequential takeaway. |
+| `<div class="note-card"><span class="label">Note</span> ...</div>` | Quiet grouped note — use instead of a second callout. |
+| `<div class="spec-card"><span class="label">Specs</span> ...</div>` | Mono grouped facts (versions, sizes, settings) — instead of a second callout. |
+| `<div class="table-scroll"><table>…</table></div>` | REQUIRED wrapper for every table, so wide tables scroll inside the wrapper on phones. |
 
 Use HTML entities for typography: `&mdash;` `&ndash;` `&rarr;` `&hellip;` `&ldquo;` `&rdquo;` `&amp;` `&#9733;` (★).
 
@@ -153,3 +156,26 @@ The bhandar has a sibling site at `site-private/` served by a second Tailscale i
 The page-template aesthetic itself is identical on both sides — only the catalog landing differs.
 
 **Discoverability:** the private side is invisible to the public internet by design (no public DNS record, Funnel off). Default behavior is correct; you don't need to mark individual pages as private — putting them in `site-private/` is the entire access control.
+
+
+## Platform contract (relaunch, 2026-10-26)
+
+The rules below are enforced by `publish.py` and the Caddy config, not by taste. They exist because the April–August library drifted in exactly these places.
+
+**Canonical stylesheets.** One stylesheet per page type, owned by this skill: `assets/bhandar.css` (articles) and `assets/catalogue.css` (catalogue). `build_index.py` copies both, plus `assets/favicon.svg`, into each docroot's `/assets/` on every rebuild. Pages link `/assets/bhandar.css`; the catalogue links `/assets/catalogue.css`. Never inline a `<style>` block in a page, and never copy a stylesheet into a page directory. A design fix lands in the skill asset and propagates on the next rebuild. The one sanctioned variant is a report page's small additional classes, defined in `bhandar.css` itself — there is no second forked stylesheet.
+
+**Head metadata.** Every page ships: `<title>`, a meta `description` (required, non-empty, and identical to the manifest entry's `description` — register refuses a mismatch), favicon (`/assets/favicon.svg`), `theme-color`, a canonical URL, and Open Graph tags (`og:type`, `og:title`, `og:description`, `og:url`) fed from the same title/description. The catalogue index gets the same treatment from its manifest `site` block (`description`, `canonical_url`).
+
+**Zero JavaScript.** The CSP sends `script-src 'none'` and `publish.py` refuses any page containing a script element. Interactive demos do not belong on these sites.
+
+**Responsive contract.** Design at three widths: 1100px (article column), 720px, 480px. Watermarks sit inside `.watermark-layer`, a clipped layer, so oversized glyphs never cause horizontal scroll; `html, body` also carry `overflow-x: clip`. Every table is wrapped in `.table-scroll`. Figures cap at the column width; images are `max-width: 100%`. Print strips decoration (grain, watermarks, crumbs, chapter nav) via the `@media print` block in the canonical sheets.
+
+**Series pattern.** A series is a folder `<slug>/` with a cover `index.html` built from `assets/series-cover-template.html` (about-the-series prose + an ordered `.reading-list` of chapters) and chapters built from `assets/chapter-template.html` (crumbs back to the cover, `.chapter-nav` with prev / cover / next). Chapter navigation is explicit HTML — there is no runtime generation. The catalogue tracks the series only; chapters are reached through the cover, and `publish.py check` verifies none are orphaned.
+
+**Lock band.** One component, `.lock-band`, defined identically in both canonical sheets: crimson border, mono uppercase, `● Tailnet only · Antaranga`. The private catalogue renders it from the manifest; private article pages include the same markup under the header (the page template carries it as a commented block to enable).
+
+**Callout budget.** One `.callout` per page, hard cap. Everything that used to be a second or third callout is a `.note-card` (prose) or `.spec-card` (mono facts) instead.
+
+**Weight budgets.** Single page ≤ 100 KB HTML (warning) / 500 KB (hard fail); images ≤ 300 KB each where practical; audio ≤ 5 MB; binaries ≤ 25 MB each, versioned filenames under `/downloads/<slug>/`, never a mutable `-latest` name; a docroot stays ≤ 100 MB total, keeping only the current and previous binary build.
+
+**Layout.** One folder per article or series: `<slug>.html` for singles, `<slug>/` with its own `assets/` for series. Shared assets live once, under `/assets/`. Internal links must resolve — `publish.py check` crawls from the catalogue and fails on broken links and orphan pages. Counts on the catalogue (volumes shelved) are generated from the manifest, never hand-typed.
